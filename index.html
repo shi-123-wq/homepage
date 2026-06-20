@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>石业伟 · 前端工程师 · 个人主页</title>
+    <style>
+        /* ========== Reset & Variables ========== */
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        :root {
+            --bg: #f8fafc;
+            --surface: #ffffff;
+            --text: #1e293b;
+            --text-secondary: #64748b;
+            --text-muted: #94a3b8;
+            --accent: #6366f1;
+            --accent-light: #818cf8;
+            --accent-glow: rgba(99, 102, 241, 0.15);
+            --cyan: #06b6d4;
+            --border: #e2e8f0;
+            --border-light: #f1f5f9;
+            --radius: 16px;
+            --radius-sm: 10px;
+            --shadow: 0 1px 3px rgba(0,0,0,.04), 0 1px 2px rgba(0,0,0,.06);
+            --shadow-md: 0 4px 6px -1px rgba(0,0,0,.04), 0 2px 4px -2px rgba(0,0,0,.04);
+            --shadow-lg: 0 10px 25px -5px rgba(0,0,0,.05), 0 8px 10px -6px rgba(0,0,0,.04);
+            --font: 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', system-ui, -apple-system, sans-serif;
+            --mono: 'Cascadia Code', 'Fira Code', 'JetBrains Mono', 'SF Mono', 'Consolas', monospace;
+        }
+
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: var(--font);
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+            overflow-x: hidden;
+        }
+
+        /* ========== Background Decoration ========== */
+        .bg-grid {
+            position: fixed; inset: 0; z-index: 0; pointer-events: none;
+            background-image:
+                linear-gradient(rgba(99,102,241,.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(99,102,241,.03) 1px, transparent 1px);
+            background-size: 60px 60px;
+            mask-image: radial-gradient(ellipse 80% 60% at 50% 0%, black 30%, transparent 70%);
+        }
+
+        .bg-glow {
+            position: fixed; z-index: 0; pointer-events: none;
+            width: 600px; height: 600px; border-radius: 50%;
+            background: radial-gradient(circle, var(--accent-glow) 0%, transparent 70%);
+            top: -200px; left: 50%; transform: translateX(-50%);
+            animation: glowPulse 8s ease-in-out infinite;
+        }
+        @keyframes glowPulse {
+            0%, 100% { opacity: .6; transform: translateX(-50%) scale(1); }
+            50%      { opacity: 1;   transform: translateX(-50%) scale(1.15); }
+        }
+
+        /* ========== Layout ========== */
+        .container {
+            position: relative; z-index: 1;
+            max-width: 880px; margin: 0 auto; padding: 0 24px;
+        }
+
+        /* ========== Nav ========== */
+        .nav {
+            position: sticky; top: 0; z-index: 100;
+            backdrop-filter: blur(20px) saturate(180%);
+            background: rgba(248,250,252,.72);
+            border-bottom: 1px solid var(--border-light);
+        }
+        .nav-inner {
+            display: flex; align-items: center; justify-content: space-between;
+            max-width: 880px; margin: 0 auto; padding: 0 24px; height: 56px;
+        }
+        .nav-logo {
+            font-weight: 700; font-size: 1.1rem; letter-spacing: -.01em;
+            background: linear-gradient(135deg, var(--accent), var(--cyan));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .nav-links { display: flex; gap: 28px; list-style: none; }
+        .nav-links a {
+            text-decoration: none; color: var(--text-secondary); font-size: .9rem;
+            font-weight: 500; transition: color .2s; position: relative;
+        }
+        .nav-links a::after {
+            content: ''; position: absolute; bottom: -4px; left: 0; width: 0; height: 2px;
+            background: var(--accent); border-radius: 1px; transition: width .25s ease;
+        }
+        .nav-links a:hover { color: var(--accent); }
+        .nav-links a:hover::after { width: 100%; }
+
+        /* ========== Hero ========== */
+        .hero { padding: 80px 0 60px; text-align: center; }
+        .hero-avatar {
+            width: 100px; height: 100px; border-radius: 50%;
+            background: linear-gradient(135deg, var(--accent), var(--cyan));
+            display: inline-flex; align-items: center; justify-content: center;
+            font-size: 2.6rem; color: #fff; font-weight: 700;
+            margin-bottom: 28px; box-shadow: 0 0 0 6px var(--accent-glow),
+                                           0 8px 30px rgba(99,102,241,.18);
+            user-select: none;
+        }
+        .hero h1 {
+            font-size: clamp(2rem, 5vw, 2.8rem); font-weight: 800;
+            letter-spacing: -.02em; line-height: 1.2; margin-bottom: 8px;
+        }
+        .hero h1 .highlight {
+            background: linear-gradient(135deg, var(--accent), var(--cyan));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .hero-tagline {
+            font-size: 1.1rem; color: var(--text-secondary); font-weight: 400;
+            margin-bottom: 6px;
+        }
+        .hero-sub {
+            font-family: var(--mono); font-size: .85rem; color: var(--text-muted);
+            margin-bottom: 32px;
+        }
+        .hero-badges {
+            display: flex; flex-wrap: wrap; gap: 10px; justify-content: center;
+        }
+        .badge {
+            display: inline-flex; align-items: center; gap: 6px;
+            padding: 6px 14px; border-radius: 999px;
+            font-size: .82rem; font-weight: 500;
+            background: var(--surface); border: 1px solid var(--border);
+            color: var(--text-secondary); transition: all .25s;
+        }
+        .badge:hover {
+            border-color: var(--accent-light); color: var(--accent);
+            box-shadow: 0 0 0 3px var(--accent-glow); transform: translateY(-1px);
+        }
+        .badge-dot {
+            width: 8px; height: 8px; border-radius: 50%;
+            background: var(--accent);
+            box-shadow: 0 0 6px var(--accent-light);
+            animation: dotBlink 2s ease-in-out infinite;
+        }
+        @keyframes dotBlink {
+            0%, 100% { opacity: 1; }
+            50%      { opacity: .4; }
+        }
+
+        /* ========== Section ========== */
+        section { padding: 60px 0; }
+        .section-label {
+            font-family: var(--mono); font-size: .78rem; font-weight: 600;
+            text-transform: uppercase; letter-spacing: .08em;
+            color: var(--accent); margin-bottom: 12px;
+        }
+        .section-title {
+            font-size: 1.75rem; font-weight: 700; letter-spacing: -.01em;
+            margin-bottom: 32px; line-height: 1.3;
+        }
+
+        /* ========== About Card ========== */
+        .card {
+            background: var(--surface); border: 1px solid var(--border);
+            border-radius: var(--radius); padding: 32px;
+            box-shadow: var(--shadow); transition: box-shadow .3s, border-color .3s;
+        }
+        .card:hover {
+            box-shadow: var(--shadow-lg); border-color: transparent;
+        }
+        .about-grid {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 24px;
+        }
+        .about-text { font-size: .95rem; color: var(--text-secondary); line-height: 1.8; }
+        .about-text strong { color: var(--text); }
+        .stat-row { display: flex; gap: 24px; margin-top: 20px; }
+        .stat-item { text-align: center; flex: 1; }
+        .stat-num {
+            font-size: 1.6rem; font-weight: 800;
+            background: linear-gradient(135deg, var(--accent), var(--cyan));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .stat-label { font-size: .78rem; color: var(--text-muted); margin-top: 2px; }
+
+        /* ========== Skills ========== */
+        .skills-grid {
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(240px,1fr)); gap: 16px;
+        }
+        .skill-card {
+            background: var(--surface); border: 1px solid var(--border);
+            border-radius: var(--radius-sm); padding: 20px 22px;
+            box-shadow: var(--shadow); transition: all .3s; cursor: default;
+        }
+        .skill-card:hover {
+            transform: translateY(-3px); box-shadow: var(--shadow-lg);
+            border-color: var(--accent-light);
+        }
+        .skill-icon { font-size: 1.4rem; margin-bottom: 8px; }
+        .skill-name { font-weight: 700; font-size: .95rem; margin-bottom: 4px; }
+        .skill-desc { font-size: .82rem; color: var(--text-muted); line-height: 1.5; }
+
+        /* ========== Timeline ========== */
+        .timeline { position: relative; padding-left: 28px; }
+        .timeline::before {
+            content: ''; position: absolute; left: 8px; top: 4px; bottom: 4px;
+            width: 2px; background: linear-gradient(to bottom, var(--accent), var(--cyan), transparent);
+            border-radius: 1px;
+        }
+        .timeline-item { position: relative; margin-bottom: 28px; }
+        .timeline-item::before {
+            content: ''; position: absolute; left: -24px; top: 8px;
+            width: 10px; height: 10px; border-radius: 50%;
+            background: var(--accent);
+            box-shadow: 0 0 0 4px var(--accent-glow);
+        }
+        .timeline-year {
+            font-family: var(--mono); font-size: .78rem; color: var(--accent);
+            font-weight: 600; margin-bottom: 4px;
+        }
+        .timeline-title { font-weight: 700; font-size: .95rem; }
+        .timeline-desc { font-size: .85rem; color: var(--text-muted); margin-top: 2px; }
+
+        /* ========== Contact ========== */
+        .contact-grid {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 24px; align-items: start;
+        }
+        .contact-list { display: flex; flex-direction: column; gap: 16px; }
+        .contact-item {
+            display: flex; align-items: center; gap: 14px;
+            padding: 14px 18px; border-radius: var(--radius-sm);
+            background: var(--surface); border: 1px solid var(--border);
+            text-decoration: none; color: var(--text); transition: all .25s;
+            box-shadow: var(--shadow);
+        }
+        .contact-item:hover {
+            border-color: var(--accent-light);
+            box-shadow: 0 0 0 3px var(--accent-glow); transform: translateX(3px);
+        }
+        .contact-icon {
+            width: 42px; height: 42px; border-radius: 10px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.2rem; flex-shrink: 0;
+        }
+        .contact-icon.email    { background: #eef2ff; color: var(--accent); }
+        .contact-icon.github   { background: #f1f5f9; color: #334155; }
+        .contact-icon.wechat   { background: #ecfdf5; color: #10b981; }
+        .contact-icon.phone    { background: #fef3c7; color: #f59e0b; }
+        .contact-label { font-size: .78rem; color: var(--text-muted); }
+        .contact-value { font-weight: 600; font-size: .9rem; }
+
+        .qr-card {
+            background: var(--surface); border: 1px solid var(--border);
+            border-radius: var(--radius); padding: 28px; text-align: center;
+            box-shadow: var(--shadow); display: flex; flex-direction: column;
+            align-items: center; gap: 16px;
+        }
+        .qr-card:hover { box-shadow: var(--shadow-lg); border-color: transparent; }
+        .qr-img {
+            width: 180px; height: 180px; border-radius: var(--radius-sm);
+            border: 1px solid var(--border-light); padding: 8px;
+            background: #fff;
+        }
+        .qr-tip { font-size: .82rem; color: var(--text-muted); line-height: 1.5; }
+
+        /* ========== Footer ========== */
+        .footer {
+            text-align: center; padding: 40px 0;
+            font-size: .82rem; color: var(--text-muted);
+            border-top: 1px solid var(--border-light); margin-top: 40px;
+        }
+        .footer .heart { color: #ef4444; animation: heartBeat 1.5s ease-in-out infinite; display: inline-block; }
+        @keyframes heartBeat {
+            0%, 100% { transform: scale(1); }
+            14%      { transform: scale(1.25); }
+            28%      { transform: scale(1); }
+        }
+
+        /* ========== Animations ========== */
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(24px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+        .animate-in {
+            animation: fadeUp .6s ease both;
+        }
+        .delay-1 { animation-delay: .1s; }
+        .delay-2 { animation-delay: .2s; }
+        .delay-3 { animation-delay: .3s; }
+        .delay-4 { animation-delay: .4s; }
+
+        /* ========== Responsive ========== */
+        @media (max-width: 640px) {
+            .about-grid, .contact-grid { grid-template-columns: 1fr; }
+            .nav-links { display: none; }
+            .hero { padding: 50px 0 40px; }
+            section { padding: 40px 0; }
+            .skills-grid { grid-template-columns: 1fr; }
+            .stat-row { flex-wrap: wrap; gap: 16px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 背景装饰 -->
+    <div class="bg-grid"></div>
+    <div class="bg-glow"></div>
+
+    <!-- 导航 -->
+    <nav class="nav">
+        <div class="nav-inner">
+            <span class="nav-logo">&lt;Dev /&gt;</span>
+            <ul class="nav-links">
+                <li><a href="#about">关于</a></li>
+                <li><a href="#skills">技能</a></li>
+                <li><a href="#experience">经历</a></li>
+                <li><a href="#contact">联系</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container">
+
+        <!-- ====== Hero ====== -->
+        <header class="hero">
+            <div class="hero-avatar animate-in">石</div>
+            <h1 class="animate-in delay-1">
+                你好，我是<span class="highlight">石业伟</span> 👋
+            </h1>
+            <p class="hero-tagline animate-in delay-2">前端开发工程师 · 致力于构建优质的 Web 体验</p>
+            <p class="hero-sub animate-in delay-2">React · TypeScript · Vue.js · Node.js</p>
+            <div class="hero-badges animate-in delay-3">
+                <span class="badge"><span class="badge-dot"></span> 应届生 · 求职中</span>
+                <span class="badge">📍 杭州 / 上海</span>
+                <span class="badge">🎓 软件工程</span>
+            </div>
+        </header>
+
+        <!-- ====== About ====== -->
+        <section id="about">
+            <div class="section-label">// 01. 关于我</div>
+            <h2 class="section-title">保持好奇心，<br>用代码探索无限可能。</h2>
+            <div class="card about-grid">
+                <div>
+                    <p class="about-text">
+                        我是 <strong>石业伟</strong>，一名 <strong>软件工程专业</strong>应届毕业生，
+                        专注于前端开发方向。热爱构建美观、流畅、好用的 Web 应用，
+                        追求 <strong>像素级还原</strong>与 <strong>优雅的代码结构</strong>。
+                    </p>
+                    <p class="about-text" style="margin-top:12px;">
+                        在校期间系统学习了数据结构、算法、计算机网络等核心课程，
+                        并自主完成了多个全栈项目。熟悉 <strong>React / Vue 生态</strong>，
+                        对前端工程化、性能优化有浓厚兴趣和实践经验。
+                    </p>
+                    <div class="stat-row">
+                        <div class="stat-item">
+                            <div class="stat-num">10+</div>
+                            <div class="stat-label">项目经验</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-num">3段</div>
+                            <div class="stat-label">实习经历</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-num">GPA 3.7</div>
+                            <div class="stat-label">学业成绩</div>
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <p class="about-text">
+                        <strong>💡 技术理念</strong><br>
+                        代码是给人看的，顺便能在机器上运行。注重可读性、可维护性和团队协作效率。
+                    </p>
+                    <p class="about-text" style="margin-top:12px;">
+                        <strong>🎯 求职方向</strong><br>
+                        寻求前端开发工程师岗位，期望参与有挑战性的产品研发，
+                        在实战中快速成长，为团队创造价值。
+                    </p>
+                    <p class="about-text" style="margin-top:12px;">
+                        <strong>📚 业余爱好</strong><br>
+                        写技术博客、参与开源社区、打篮球、探索各种新鲜的效率工具。
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ====== Skills ====== -->
+        <section id="skills">
+            <div class="section-label">// 02. 技能栈</div>
+            <h2 class="section-title">工具箱</h2>
+            <div class="skills-grid">
+                <div class="skill-card">
+                    <div class="skill-icon">⚛️</div>
+                    <div class="skill-name">React & Next.js</div>
+                    <div class="skill-desc">SSR/SSG、Hooks、状态管理（Zustand / Redux）、React Router</div>
+                </div>
+                <div class="skill-card">
+                    <div class="skill-icon">🟩</div>
+                    <div class="skill-name">Vue.js & Nuxt</div>
+                    <div class="skill-desc">Composition API、Pinia、Vue Router、组件库封装</div>
+                </div>
+                <div class="skill-card">
+                    <div class="skill-icon">🔷</div>
+                    <div class="skill-name">TypeScript</div>
+                    <div class="skill-desc">类型系统、泛型编程、工具类型、声明文件编写</div>
+                </div>
+                <div class="skill-card">
+                    <div class="skill-icon">🎨</div>
+                    <div class="skill-name">CSS & 工程化</div>
+                    <div class="skill-desc">Tailwind CSS、CSS Modules、Styled Components、设计系统</div>
+                </div>
+                <div class="skill-card">
+                    <div class="skill-icon">⚡</div>
+                    <div class="skill-name">构建 & 工程化</div>
+                    <div class="skill-desc">Vite、Webpack、Turbopack、Monorepo (Turborepo/pnpm)</div>
+                </div>
+                <div class="skill-card">
+                    <div class="skill-icon">🧪</div>
+                    <div class="skill-name">测试 & 质量</div>
+                    <div class="skill-desc">Vitest、Playwright、Storybook、ESLint/Prettier</div>
+                </div>
+                <div class="skill-card">
+                    <div class="skill-icon">🐳</div>
+                    <div class="skill-name">Node.js & DevOps</div>
+                    <div class="skill-desc">Express/NestJS、Docker、CI/CD、Nginx</div>
+                </div>
+                <div class="skill-card">
+                    <div class="skill-icon">🗄️</div>
+                    <div class="skill-name">数据 & 后端</div>
+                    <div class="skill-desc">GraphQL、tRPC、Prisma、MySQL/PostgreSQL</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ====== Experience Timeline ====== -->
+        <section id="experience">
+            <div class="section-label">// 03. 教育 & 实习</div>
+            <h2 class="section-title">成长轨迹</h2>
+            <div class="card">
+                <div class="timeline">
+                    <div class="timeline-item">
+                        <div class="timeline-year">2025.03 — 2025.06</div>
+                        <div class="timeline-title">前端开发实习生 · XX 科技有限公司</div>
+                        <div class="timeline-desc">参与内部中后台管理系统前端开发，使用 React + TypeScript 技术栈，负责表单引擎模块重构，提升配置效率 30%。</div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-year">2024.07 — 2024.12</div>
+                        <div class="timeline-title">前端开发实习生 · XX 互联</div>
+                        <div class="timeline-desc">参与 C 端 H5 活动页开发，基于 Vue.js + Vite 搭建组件库模板，编写单元测试覆盖率达到 85%+。</div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-year">2021.09 — 2025.06</div>
+                        <div class="timeline-title">软件工程 本科 · XX 大学</div>
+                        <div class="timeline-desc">主修课程：数据结构、算法设计、计算机网络、操作系统、数据库原理。在校期间获校级奖学金、参加 ACM 校赛获二等奖。</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ====== Contact ====== -->
+        <section id="contact">
+            <div class="section-label">// 04. 联系我</div>
+            <h2 class="section-title">期待与你交流</h2>
+            <div class="contact-grid">
+                <div class="contact-list">
+                    <a href="mailto:shiweiye@example.com" class="contact-item">
+                        <span class="contact-icon email">📧</span>
+                        <div>
+                            <div class="contact-label">电子邮箱</div>
+                            <div class="contact-value">shiweiye@example.com</div>
+                        </div>
+                    </a>
+                    <a href="https://github.com" target="_blank" rel="noopener" class="contact-item">
+                        <span class="contact-icon github">🐙</span>
+                        <div>
+                            <div class="contact-label">GitHub</div>
+                            <div class="contact-value">github.com/shiweiye</div>
+                        </div>
+                    </a>
+                    <div class="contact-item">
+                        <span class="contact-icon wechat">💬</span>
+                        <div>
+                            <div class="contact-label">微信</div>
+                            <div class="contact-value">syw213ovo</div>
+                        </div>
+                    </div>
+                    <div class="contact-item">
+                        <span class="contact-icon phone">📱</span>
+                        <div>
+                            <div class="contact-label">手机</div>
+                            <div class="contact-value">131-4787-4979</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 二维码 -->
+                <div class="qr-card">
+                    <img
+                        class="qr-img"
+                        src="微信二维码.jpg"
+                        alt="微信二维码"
+                        loading="lazy"
+                    />
+                    <div>
+                        <p style="font-weight:700; font-size:.95rem; margin-bottom:4px;">📱 扫码添加微信</p>
+                        <p class="qr-tip">
+                            微信号：syw213ovo<br>
+                            期待与更多优秀的朋友交流合作
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p>© 2025 石业伟 · Built with <span class="heart">♥</span> and coffee</p>
+        <p style="margin-top:4px; font-size:.75rem;">保持热爱，奔赴山海</p>
+    </footer>
+
+</body>
+</html>
